@@ -5,25 +5,6 @@ import joblib
 import pandas as pd
 import time
 
-# CSS styling
-st.markdown("""
-<style>
-    .main { background-color: #f9f9f9; }
-    .title { color: #4CAF50; font-size:40px; text-align:center; }
-    .subtitle { color: #555; font-size:18px; text-align:center; }
-    footer {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
-
-# Sidebar info
-st.sidebar.title("Tentang Aplikasi")
-st.sidebar.info("""
-Aplikasi ini memprediksi apakah jamur **beracun** atau **bisa dimakan** berdasarkan ciri-cirinya.
-
-# Judul
-st.markdown('<p class="title">🍄 Aplikasi Klasifikasi Jamur</p>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Masukkan ciri-ciri jamur untuk memprediksi apakah jamur beracun atau bisa dimakan.</p>', unsafe_allow_html=True)
-
 # Mapping encoding hasil LabelEncoder di training
 label_encoders = {
     'cap-shape': {'b': 0, 'c': 1, 'f': 2, 'k': 3, 's': 4, 'x': 5},
@@ -48,6 +29,31 @@ label_encoders = {
     'spore-print-color': {'b': 0, 'h': 1, 'k': 2, 'n': 3, 'o': 4, 'r': 5, 'u': 6, 'w': 7, 'y': 8},
     'population': {'a': 0, 'c': 1, 'n': 2, 's': 3, 'v': 4, 'y': 5},
     'habitat': {'d': 0, 'g': 1, 'l': 2, 'm': 3, 'p': 4, 'u': 5, 'w': 6}
+}
+
+nama_fitur_id = {
+    'cap-shape': 'Bentuk topi',
+    'cap-surface': 'Permukaan topi',
+    'cap-color': 'Warna topi',
+    'bruises': 'Memar',
+    'odor': 'Bau',
+    'gill-attachment': 'Letak bilah',
+    'gill-spacing': 'Jarak bilah',
+    'gill-size': 'Ukuran bilah',
+    'gill-color': 'Warna bilah',
+    'stalk-shape': 'Bentuk batang',
+    'stalk-root': 'Akar batang',
+    'stalk-surface-above-ring': 'Permukaan batang atas cincin',
+    'stalk-surface-below-ring': 'Permukaan batang bawah cincin',
+    'stalk-color-above-ring': 'Warna batang atas cincin',
+    'stalk-color-below-ring': 'Warna batang bawah cincin',
+    'veil-type': 'Tipe selaput',
+    'veil-color': 'Warna selaput',
+    'ring-number': 'Jumlah cincin',
+    'ring-type': 'Tipe cincin',
+    'spore-print-color': 'Warna cetakan spora',
+    'population': 'Populasi',
+    'habitat': 'Habitat'
 }
 
 # Mapping kode agar readable
@@ -101,7 +107,8 @@ user_input = []
 input_readable = {}
 for feature, mapping in label_encoders.items():
     readable_options = [kode_to_nama[feature][k] for k in mapping.keys()]
-    selected_readable = st.selectbox(f"{feature.replace('-', ' ').capitalize()}", readable_options)
+    label_fitur = nama_fitur_id.get(feature, feature)
+    selected_readable = st.selectbox(label_fitur, readable_options)
     selected_code = [k for k, v in kode_to_nama[feature].items() if v == selected_readable][0]
     encoded_val = mapping[selected_code]
     user_input.append(encoded_val)
@@ -109,7 +116,8 @@ for feature, mapping in label_encoders.items():
 
 # Tampilkan tabel input
 st.markdown("### Ringkasan Input")
-st.table(pd.DataFrame([input_readable]))
+df_input = pd.DataFrame(input_readable.items(), columns=["Fitur", "Nilai"])
+st.table(df_input)
 
 # Tombol prediksi
 if st.button("🔍 Prediksi"):
