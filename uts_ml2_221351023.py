@@ -35,7 +35,19 @@ Menerapkan ANN menggunakan TensorFlow/Keras, dilatih pada data jamur yang telah 
 
 ## Import data dari kaggle
 """
+!mkdir -p ~/.kaggle
+!cp kaggle.json ~/.kaggle/
+!chmod 600 ~/.kaggle/kaggle.json
+!ls ~/.kaggle
 
+from google.colab import files
+files.upload()
+
+!kaggle datasets download -d uciml/mushroom-classification
+
+!mkdir mushroom-classification
+!unzip mushroom-classification.zip -d mushroom-classification
+!ls mushroom-classification
 
 """## Import Library yang dibutuhkan"""
 
